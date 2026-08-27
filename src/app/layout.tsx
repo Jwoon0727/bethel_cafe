@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   applicationName: "Branch Café",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
+    statusBarStyle: "black-translucent",
     title: "Branch Café",
   },
   formatDetection: {
@@ -39,7 +39,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="ko"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased bg-[#6b7c5b]`}
     >
       <head>
         <link rel="apple-touch-icon" href="/icon-192.svg" />
