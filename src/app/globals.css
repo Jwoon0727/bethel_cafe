@@ -24,3 +24,19 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* /display: 완료 번호가 바뀔 때 잠깐 튀어오르는 강조 애니메이션 */
+@keyframes display-pop {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.4;
+  }
+  60% {
+    transform: scale(1.04);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

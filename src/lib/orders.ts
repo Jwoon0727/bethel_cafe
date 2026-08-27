@@ -1,0 +1,62 @@
+import { createClient } from "@/lib/supabase/client";
+import type { Order, OrderItem, Station } from "@/lib/types";
+
+/**
+ * 주문 생성. 브라우저에서 Supabase RPC를 직접 호출한다 (서버 액션 미사용).
+ * IMPLEMENTATION_PLAN.md 판단 4 — 홉을 늘리지 않기 위해 Next 서버를 거치지 않는다.
+ */
+export async function createOrder(
+  station: Station,
+  items: OrderItem[],
+): Promise<Order> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .rpc("create_order", {
+      p_station: station,
+      p_items: items,
+    })
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  if (!data) {
+    // 주문번호를 못 받은 경우는 진짜 실패다 (성공 간주 불가)
+    throw new Error("주문 생성에 실패했습니다. 다시 시도해 주세요.");
+  }
+
+  return data as Order;
+}
+
+/**
+ * 완료 처리. RPC가 `where status = 'pending'` 조건으로 0행을 반환하면
+ * (이미 완료 처리된 중복 클릭 등) null을 돌려준다 — 이는 실패가 아니라
+ * "이미 처리됨"이므로 호출부에서 성공으로 간주해야 한다.
+ */
+export async function markOrderDone(id: string): Promise<Order | null> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .rpc("mark_order_done", { p_id: id })
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  return (data as Order) ?? null;
+}
+
+/** markOrderDone과 동일한 이유로 0행(null)은 실패가 아니다. */
+export async function markOrderPicked(id: string): Promise<Order | null> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .rpc("mark_order_picked", { p_id: id })
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  return (data as Order) ?? null;
+}
