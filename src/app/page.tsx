@@ -77,11 +77,11 @@ export default function Home() {
   return (
     <div className="flex min-h-screen flex-col bg-[#f5f1e8]">
       {/* Header */}
-      <header className="bg-[#6b7c5b] px-6 py-4 text-white">
+      <header className="bg-[#6b7c5b] px-6 py-5 text-white">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-xl">🌿</span>
-            <h1 className="text-lg font-medium">The Branch Café</h1>
+          <div className="flex items-center gap-3">
+            <span className="text-3xl">🌿</span>
+            <h1 className="text-2xl font-bold md:text-3xl">The Branch Café</h1>
           </div>
           {station && (
             <button
@@ -96,9 +96,9 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <div className="mx-auto flex w-full max-w-[820px] flex-1 flex-col px-6 py-6 md:px-8">
+      <div className="mx-auto flex w-full max-w-[820px] flex-1 flex-col px-6 pb-6 pt-16 md:px-8 md:pt-20">
         {/* Menu Section */}
-        <div className="mb-5 rounded-2xl bg-white p-5 shadow-sm md:p-6">
+        <div className="mb-8 rounded-2xl bg-white p-5 shadow-sm md:p-6">
           <h2 className="mb-4 text-base font-medium text-gray-700">
             메뉴 선택 (Menu)
           </h2>
@@ -120,10 +120,10 @@ export default function Home() {
           type="button"
           disabled={!canOrder}
           onClick={handleOrder}
-          className="w-full rounded-xl bg-[#2D5A43] py-5 text-center text-lg font-medium text-white transition hover:bg-[#244a36] disabled:opacity-40"
+          className="mt-6 w-full rounded-xl bg-[#2D5A43] py-6 text-center font-semibold text-white transition hover:bg-[#244a36] disabled:opacity-40"
         >
-          <div>주문 등록</div>
-          <div className="text-sm">Submit Order</div>
+          <div className="text-2xl font-bold">주문 등록</div>
+          <div className="text-base">Submit Order</div>
         </button>
       </div>
 

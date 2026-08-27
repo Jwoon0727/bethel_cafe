@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="96" fill="#6b7c5b"/>
+  <g transform="translate(256 240)" fill="#f5f1e8">
+    <path d="M-10 80c-6-48 20-112 86-150-6 64-26 118-86 150z" transform="rotate(-15)"/>
+    <path d="M-10 80c-6-48 20-112 86-150-6 64-26 118-86 150z" transform="rotate(60) scale(0.8)"/>
+    <rect x="-5" y="-10" width="10" height="112" rx="5"/>
+  </g>
+  <text x="256" y="440" text-anchor="middle" font-family="'Helvetica Neue', Arial, sans-serif" font-size="54" font-weight="700" fill="#f5f1e8">Branch Café</text>
+</svg>
