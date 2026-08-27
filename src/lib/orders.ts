@@ -60,3 +60,40 @@ export async function markOrderPicked(id: string): Promise<Order | null> {
 
   return (data as Order) ?? null;
 }
+
+/**
+ * 상태 되돌리기(취소). mark_order_done/picked과 동일하게 security definer RPC를
+ * 통해서만 UPDATE한다 — orders 테이블에는 SELECT 정책만 있고 직접 UPDATE는
+ * RLS로 전면 차단되어 있으므로(3-6절), 직접 .update()를 쓰면 조용히 0행만
+ * 돌아오고 DB에는 아무 변화도 없다.
+ * done → pending: 준비완료를 다시 대기중으로
+ * picked_up → done: 수령완료를 다시 준비완료로
+ * RPC의 `where ... and status = '이전상태'` 조건 때문에 그 사이 다른 곳에서
+ * 이미 상태가 바뀐 경우 0행(null)이 반환된다 — 이건 "이미 처리됨"이 아니라
+ * "취소가 더 이상 유효하지 않음"이므로 호출부에서 실패로 다뤄야 한다.
+ */
+export async function revertOrderToPending(id: string): Promise<Order | null> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .rpc("revert_order_to_pending", { p_id: id })
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  return (data as Order) ?? null;
+}
+
+export async function revertOrderToDone(id: string): Promise<Order | null> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .rpc("revert_order_to_done", { p_id: id })
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  return (data as Order) ?? null;
+}

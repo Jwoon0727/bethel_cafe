@@ -1,6 +1,8 @@
 "use client";
 
-import { MENU, type MenuCode } from "@/lib/menu";
+import { MENU } from "@/lib/menu";
+import { TempBadge } from "@/components/temp-badge";
+import type { MenuCode } from "@/lib/menu";
 
 const MAX_QTY = 99;
 
@@ -12,51 +14,75 @@ type MenuGridProps = {
 
 export function MenuGrid({ cart, onChangeQty, disabled }: MenuGridProps) {
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      {MENU.map((item) => {
-        const qty = cart[item.code] ?? 0;
+    <>
+      {/* Menu Selection */}
+      <div className="grid grid-cols-2 gap-3 md:gap-4">
+        {MENU.map((item) => {
+          const qty = cart[item.code] ?? 0;
+          const isSelected = qty > 0;
 
-        return (
-          <div
-            key={item.code}
-            className="flex flex-col gap-4 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-950"
-          >
-            <div className="space-y-1">
-              <span className="inline-block rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium text-zinc-600 dark:bg-zinc-900 dark:text-zinc-300">
-                {item.temp}
-              </span>
-              <p className="text-lg font-semibold">{item.nameKo}</p>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                {item.nameEn} · {item.temp}
-              </p>
-            </div>
+          return (
+            <button
+              key={item.code}
+              type="button"
+              disabled={disabled}
+              onClick={() => onChangeQty(item.code, isSelected ? qty : 1)}
+              className={`flex min-h-[120px] flex-col items-center justify-center rounded-2xl border-2 px-3 py-4 transition md:min-h-[140px] ${
+                isSelected
+                  ? "border-[#6b7c5b] bg-[#6b7c5b]/10"
+                  : "border-gray-300 bg-white hover:border-gray-400"
+              } disabled:opacity-40`}
+            >
+              <div className="mb-1.5 text-lg font-semibold text-gray-800 md:text-xl">
+                {item.nameKo}
+              </div>
+              <div className="mb-2 text-sm text-gray-500">{item.nameEn}</div>
+              <TempBadge temp={item.temp} size="lg" />
+            </button>
+          );
+        })}
+      </div>
 
-            <div className="flex items-center justify-center gap-4">
-              <button
-                type="button"
-                disabled={disabled || qty <= 0}
-                onClick={() => onChangeQty(item.code, Math.max(0, qty - 1))}
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-zinc-300 text-xl font-semibold transition hover:bg-zinc-100 disabled:opacity-40 dark:border-zinc-700 dark:hover:bg-zinc-900"
-                aria-label={`${item.nameKo} ${item.temp} 수량 감소`}
+      {/* Selected Items */}
+      {MENU.some((item) => (cart[item.code] ?? 0) > 0) && (
+        <div className="mt-4 space-y-2">
+          {MENU.filter((item) => (cart[item.code] ?? 0) > 0).map((item) => {
+            const qty = cart[item.code] ?? 0;
+            return (
+              <div
+                key={item.code}
+                className="flex items-center justify-between rounded-lg bg-[#e8dcc8] px-4 py-2"
               >
-                −
-              </button>
-              <span className="w-8 text-center text-xl font-bold tabular-nums">
-                {qty}
-              </span>
-              <button
-                type="button"
-                disabled={disabled || qty >= MAX_QTY}
-                onClick={() => onChangeQty(item.code, Math.min(MAX_QTY, qty + 1))}
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-zinc-300 text-xl font-semibold transition hover:bg-zinc-100 disabled:opacity-40 dark:border-zinc-700 dark:hover:bg-zinc-900"
-                aria-label={`${item.nameKo} ${item.temp} 수량 증가`}
-              >
-                +
-              </button>
-            </div>
-          </div>
-        );
-      })}
-    </div>
+                <span className="flex items-center gap-2 text-base font-medium text-gray-800">
+                  {item.nameKo}
+                  <TempBadge temp={item.temp} />
+                </span>
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    disabled={disabled}
+                    onClick={() => onChangeQty(item.code, Math.max(0, qty - 1))}
+                    className="flex h-8 w-8 items-center justify-center rounded-full bg-[#5a4a3a] text-base text-white transition hover:bg-[#4a3a2a] disabled:opacity-40"
+                  >
+                    −
+                  </button>
+                  <span className="w-6 text-center text-base font-semibold tabular-nums text-[#3c2a21]">
+                    {qty}
+                  </span>
+                  <button
+                    type="button"
+                    disabled={disabled || qty >= MAX_QTY}
+                    onClick={() => onChangeQty(item.code, Math.min(MAX_QTY, qty + 1))}
+                    className="flex h-8 w-8 items-center justify-center rounded-full bg-[#5a4a3a] text-base text-white transition hover:bg-[#4a3a2a] disabled:opacity-40"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </>
   );
 }

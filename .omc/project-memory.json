@@ -42,7 +42,7 @@
     "runtime": null
   },
   "build": {
-    "buildCommand": "echo \"=== display-board slice ===\"; grep -n 'rest\\|slice' src/app/display/display-board.tsx\necho; echo \"=== 잔여 .single() ===\"; grep -rn '\\.single()' src/ || echo \"없음 ✓\"\necho; echo \"=== 배열 전체 롤백 잔여 ===\"; grep -rn 'setOrders(snapshot)' src/ || echo \"없음 ✓\"\necho; echo \"=== lint ===\"; npm run lint 2>&1 | tail -8\necho \"=== build ===\"; npm run build 2>&1 | tail -14",
+    "buildCommand": "echo \"=== revert 핸들러 null 처리 ===\"; sed -n '/handleRevertToPending/,/^  }/p' src/app/kitchen/page.tsx\necho \"=== lint ===\"; npm run lint 2>&1 | tail -6\necho \"=== build ===\"; npm run build 2>&1 | tail -12",
     "testCommand": null,
     "lintCommand": "npm run lint",
     "devCommand": "npm run dev",

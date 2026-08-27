@@ -1,11 +1,17 @@
 "use client";
 
+import { TempBadge } from "@/components/temp-badge";
+import { MENU } from "@/lib/menu";
 import type { Order } from "@/lib/types";
 
 type OrderResultModalProps = {
   order: Order | null;
   onClose: () => void;
 };
+
+function getMenuTemp(code: string) {
+  return MENU.find((item) => item.code === code)?.temp;
+}
 
 export function OrderResultModal({ order, onClose }: OrderResultModalProps) {
   if (!order) {
@@ -14,32 +20,57 @@ export function OrderResultModal({ order, onClose }: OrderResultModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
       role="dialog"
       aria-modal="true"
     >
-      <div className="w-full max-w-sm space-y-6 rounded-2xl bg-white p-6 text-center shadow-xl dark:bg-zinc-950 sm:p-8">
-        <div className="space-y-2">
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">주문번호 Order No.</p>
-          <p className="text-6xl font-extrabold tracking-tight">{order.display_no}</p>
+      <div className="w-full max-w-sm rounded-2xl bg-[#fdfcf8] px-6 py-8 text-center shadow-xl sm:px-8">
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#2D5A43]">
+          <svg
+            className="h-7 w-7 text-white"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={3}
+            aria-hidden="true"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
         </div>
 
-        <ul className="space-y-1 text-sm text-zinc-600 dark:text-zinc-300">
-          {order.items.map((item, i) => (
-            <li key={`${item.code}-${i}`}>
-              {item.name} × {item.qty}
-            </li>
-          ))}
+        <p className="text-sm text-[#6b5a3a]">주문번호 Order No.</p>
+        <p className="mt-1 text-7xl font-extrabold tracking-tight text-[#3c2a21]">
+          {order.display_no}
+        </p>
+
+        <p className="mt-4 text-lg font-bold text-[#3c2a21]">주문이 접수되었습니다</p>
+        <p className="mt-1 text-sm text-[#6b5a3a]">Your order has been received</p>
+
+        <ul className="mt-5 space-y-2">
+          {order.items.map((item, i) => {
+            const temp = getMenuTemp(item.code);
+            const nameKo = item.name.replace(/ \((HOT|ICE)\)$/, "");
+            return (
+              <li
+                key={`${item.code}-${i}`}
+                className="flex items-center justify-center gap-2 text-base font-medium text-[#3c2a21]"
+              >
+                <span>{nameKo}</span>
+                {temp && <TempBadge temp={temp} />}
+                <span>× {item.qty}</span>
+              </li>
+            );
+          })}
         </ul>
 
-        <p className="rounded-lg bg-amber-50 px-4 py-3 text-sm font-medium text-amber-900 dark:bg-amber-950 dark:text-amber-200">
+        <p className="mt-5 rounded-xl bg-[#e8dcc8] px-4 py-3 text-sm font-medium text-[#3c2a21]">
           이 주문번호를 기억해주세요 번호를 찍어두세요
         </p>
 
         <button
           type="button"
           onClick={onClose}
-          className="w-full rounded-lg bg-zinc-900 py-3 text-sm font-semibold text-white transition hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+          className="mt-6 w-full rounded-xl bg-[#2D5A43] py-3.5 text-base font-semibold text-white transition hover:bg-[#244a36]"
         >
           확인
         </button>

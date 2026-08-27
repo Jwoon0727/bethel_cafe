@@ -259,6 +259,43 @@ grant execute on function public.mark_order_picked(uuid) to anon, authenticated;
 > `where … and status = '이전상태'` 조건이 **중복 클릭 방지** 역할을 한다.
 > 두 번째 클릭은 0행을 반환하므로 `done_at`이 덮어써지지 않는다.
 
+취소(Undo)도 같은 이유로 직접 `update()`가 아니라 RPC를 통해서만 이뤄진다.
+`orders`에는 SELECT 정책만 있고 UPDATE는 RLS로 전면 차단되어 있으므로, RPC를
+거치지 않으면 에러 없이 조용히 0행만 반환되고 DB는 바뀌지 않는다.
+
+```sql
+create or replace function public.revert_order_to_pending(p_id uuid)
+returns public.orders
+language sql
+security definer
+set search_path = public
+as $$
+  update public.orders
+     set status = 'pending', done_at = null, picked_at = null
+   where id = p_id and status = 'done'
+  returning *;
+$$;
+
+create or replace function public.revert_order_to_done(p_id uuid)
+returns public.orders
+language sql
+security definer
+set search_path = public
+as $$
+  update public.orders
+     set status = 'done', picked_at = null
+   where id = p_id and status = 'picked_up'
+  returning *;
+$$;
+
+grant execute on function public.revert_order_to_pending(uuid) to anon, authenticated;
+grant execute on function public.revert_order_to_done(uuid)    to anon, authenticated;
+```
+
+> 여기서 0행(null)은 `mark_order_done`/`mark_order_picked`와 달리 "이미 처리됨"이
+> 아니라 "이 취소가 더 이상 유효하지 않음"이다. 클라이언트는 낙관적 업데이트를
+> 롤백하고 안내 토스트를 띄워야 한다.
+
 ### 3-6. RLS 정책
 
 ```sql

@@ -162,6 +162,36 @@ grant execute on function public.mark_order_picked(uuid) to anon, authenticated;
 -- `where ... and status = '이전상태'` 조건이 중복 클릭 방지 역할을 한다.
 -- 두 번째 클릭은 0행을 반환하므로 done_at이 덮어써지지 않는다.
 
+-- 취소(Undo): 주방에서 상태를 한 단계 되돌린다. 다른 RPC와 동일하게
+-- security definer + `where ... and status = '이전상태'` 조건으로,
+-- 이미 다른 곳에서 상태가 바뀐 경우 0행을 반환한다(클라이언트가 실패로 처리).
+create or replace function public.revert_order_to_pending(p_id uuid)
+returns public.orders
+language sql
+security definer
+set search_path = public
+as $$
+  update public.orders
+     set status = 'pending', done_at = null, picked_at = null
+   where id = p_id and status = 'done'
+  returning *;
+$$;
+
+create or replace function public.revert_order_to_done(p_id uuid)
+returns public.orders
+language sql
+security definer
+set search_path = public
+as $$
+  update public.orders
+     set status = 'done', picked_at = null
+   where id = p_id and status = 'picked_up'
+  returning *;
+$$;
+
+grant execute on function public.revert_order_to_pending(uuid) to anon, authenticated;
+grant execute on function public.revert_order_to_done(uuid)    to anon, authenticated;
+
 -- =========================================================
 -- 3-6. RLS 정책
 -- =========================================================

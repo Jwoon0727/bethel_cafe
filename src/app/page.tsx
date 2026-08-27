@@ -75,40 +75,55 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-1 flex-col bg-zinc-50 dark:bg-black">
-      <div className="mx-auto w-full max-w-3xl flex-1 space-y-8 px-4 py-10 sm:px-6">
-        <header className="flex items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-semibold">커피 주문</h1>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">Coffee Order</p>
+    <div className="flex min-h-screen flex-col bg-[#f5f1e8]">
+      {/* Header */}
+      <header className="bg-[#6b7c5b] px-6 py-4 text-white">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-xl">🌿</span>
+            <h1 className="text-lg font-medium">The Branch Café</h1>
           </div>
-
           {station && (
             <button
               type="button"
               onClick={openChangeStation}
-              className="shrink-0 rounded-full border border-zinc-300 bg-white px-4 py-2 text-sm font-medium transition hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-950 dark:hover:bg-zinc-900"
+              className="rounded bg-white/20 px-2.5 py-1 text-xs transition hover:bg-white/30"
             >
-              접수대 {station} ▾
+              변경
             </button>
           )}
-        </header>
+        </div>
+      </header>
 
-        <MenuGrid cart={cart} onChangeQty={handleChangeQty} disabled={submitting} />
-
-        {errorMessage && (
-          <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-300">
-            {errorMessage}
+      {/* Main Content */}
+      <div className="mx-auto flex w-full max-w-[820px] flex-1 flex-col px-6 py-6 md:px-8">
+        {/* Menu Section */}
+        <div className="mb-5 rounded-2xl bg-white p-5 shadow-sm md:p-6">
+          <h2 className="mb-4 text-base font-medium text-gray-700">
+            메뉴 선택 (Menu)
+          </h2>
+          <MenuGrid cart={cart} onChangeQty={handleChangeQty} disabled={submitting} />
+          <p className="mt-3 text-center text-sm text-gray-500">
+            메뉴를 눌러 담아주세요
           </p>
+        </div>
+
+        {/* Error Message */}
+        {errorMessage && (
+          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {errorMessage}
+          </div>
         )}
 
+        {/* Submit Button */}
         <button
           type="button"
           disabled={!canOrder}
           onClick={handleOrder}
-          className="w-full rounded-xl bg-zinc-900 py-4 text-base font-semibold text-white transition hover:bg-zinc-700 disabled:opacity-40 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+          className="w-full rounded-xl bg-[#2D5A43] py-5 text-center text-lg font-medium text-white transition hover:bg-[#244a36] disabled:opacity-40"
         >
-          {submitting ? "주문 처리 중..." : `주문하기${totalQty > 0 ? ` (${totalQty})` : ""}`}
+          <div>주문 등록</div>
+          <div className="text-sm">Submit Order</div>
         </button>
       </div>
 
@@ -122,8 +137,8 @@ export default function Home() {
       <OrderResultModal order={resultOrder} onClose={handleCloseResult} />
 
       {resetting && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-white/70 dark:bg-black/70">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-zinc-300 border-t-zinc-900 dark:border-zinc-700 dark:border-t-zinc-100" />
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-white/70">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-300 border-t-gray-900" />
         </div>
       )}
     </div>
