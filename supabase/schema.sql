@@ -197,15 +197,23 @@ grant execute on function public.revert_order_to_done(uuid)    to anon, authenti
 -- =========================================================
 -- 모든 주문(picked_up 포함)과 순번을 초기화한다.
 -- Kitchen 화면의 "초기화" 버튼에서 호출한다.
+-- 반환값: 삭제된 주문 수(void 반환은 supabase-js에서 400이 나는 경우가 있어 int로).
+-- 참고: Supabase는 WHERE 없는 DELETE/UPDATE를 기본적으로 막으므로 `where true`를 붙여 우회한다.
 create or replace function public.reset_all_orders()
-returns void
+returns integer
 language plpgsql
 security definer
 set search_path = public
 as $$
+declare
+  v_deleted integer;
 begin
-  delete from public.orders;
-  update public.order_counters set last_no = 0;
+  delete from public.orders where true;
+  get diagnostics v_deleted = row_count;
+
+  update public.order_counters set last_no = 0 where true;
+
+  return v_deleted;
 end;
 $$;
 

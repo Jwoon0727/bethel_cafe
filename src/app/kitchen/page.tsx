@@ -15,6 +15,7 @@ import type { Order } from "@/lib/types";
 import { KitchenTable } from "./kitchen-table";
 
 const AUTO_PICKUP_MS = 3 * 60 * 1000;
+const RESET_PIN = "1914";
 
 function sortByCreatedAt(orders: Order[]): Order[] {
   return [...orders].sort((a, b) => a.created_at.localeCompare(b.created_at));
@@ -215,18 +216,25 @@ export default function KitchenPage() {
 
   async function handleReset() {
     if (resetting) return;
-    const confirmed = window.confirm(
-      "모든 주문 데이터와 순번을 초기화합니다.\n이 작업은 되돌릴 수 없습니다. 계속하시겠어요?",
+
+    const pin = window.prompt(
+      "초기화를 진행하려면 PIN 번호를 입력하세요.\n(모든 주문 데이터와 순번이 삭제되며 되돌릴 수 없습니다.)",
     );
-    if (!confirmed) return;
+    if (pin === null) return; // 사용자가 취소
+    if (pin !== RESET_PIN) {
+      showToast("PIN 번호가 올바르지 않습니다.");
+      return;
+    }
 
     setResetting(true);
     try {
       await resetAllOrders();
       setOrders([]);
       showToast("초기화가 완료되었습니다.");
-    } catch {
-      showToast("초기화에 실패했습니다. 다시 시도해주세요.");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "알 수 없는 오류";
+      showToast(`초기화에 실패했습니다: ${message}`);
+      console.error("[reset_all_orders]", err);
     } finally {
       setResetting(false);
     }
@@ -240,14 +248,23 @@ export default function KitchenPage() {
             <span className="text-xl">🌿</span>
             <h1 className="text-lg font-medium">The Branch Café — Kitchen</h1>
           </div>
-          <button
-            type="button"
-            onClick={handleReset}
-            disabled={resetting}
-            className="rounded-md border border-white/40 bg-white/10 px-3 py-1.5 text-xs font-semibold transition hover:bg-white/20 disabled:opacity-50"
-          >
-            {resetting ? "초기화 중..." : "초기화하기"}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className="rounded-md border border-white/40 bg-white/10 px-3 py-1.5 text-xs font-semibold transition hover:bg-white/20"
+            >
+              새로고침
+            </button>
+            <button
+              type="button"
+              onClick={handleReset}
+              disabled={resetting}
+              className="rounded-md border border-white/40 bg-white/10 px-3 py-1.5 text-xs font-semibold transition hover:bg-white/20 disabled:opacity-50"
+            >
+              {resetting ? "초기화 중..." : "초기화하기"}
+            </button>
+          </div>
         </div>
       </header>
 

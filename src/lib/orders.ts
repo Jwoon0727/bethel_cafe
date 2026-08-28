@@ -100,11 +100,13 @@ export async function revertOrderToDone(id: string): Promise<Order | null> {
 
 /**
  * 전체 초기화(행사 시작/종료 시 사용). 모든 주문(picked_up 포함)과 순번 카운터를 리셋한다.
+ * 반환값: 삭제된 주문 수. void 반환은 일부 클라이언트에서 400을 내므로 int로 반환한다.
  */
-export async function resetAllOrders(): Promise<void> {
+export async function resetAllOrders(): Promise<number> {
   const supabase = createClient();
-  const { error } = await supabase.rpc("reset_all_orders");
+  const { data, error } = await supabase.rpc("reset_all_orders");
   if (error) {
     throw error;
   }
+  return typeof data === "number" ? data : 0;
 }
