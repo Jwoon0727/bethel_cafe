@@ -8,7 +8,8 @@ type DisplayBoardProps = {
   orders: Order[];
 };
 
-// 벽돌 패턴을 SVG data URI로 인라인 (외부 이미지 파일 없이 순수 CSS로 처리)
+// 배경색 의논 중 - 블랙 or 다크브라운으로
+
 const BRICK_SVG = `
 <svg xmlns='http://www.w3.org/2000/svg' width='160' height='80' viewBox='0 0 160 80'>
   <rect width='160' height='80' fill='#8b2f24'/>

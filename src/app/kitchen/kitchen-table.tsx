@@ -194,9 +194,18 @@ export function KitchenTable({
   onRevertToPending,
   onRevertToDone,
 }: KitchenTableProps) {
-  const pendingOrders = orders.filter((o) => o.status === "pending");
-  const readyOrders = orders.filter((o) => o.status === "done");
-  const pickedUpOrders = orders.filter((o) => o.status === "picked_up");
+  // 대기중: 오래된 주문이 위, 새 주문이 아래(created_at 오름차순)
+  const pendingOrders = orders
+    .filter((o) => o.status === "pending")
+    .sort((a, b) => a.created_at.localeCompare(b.created_at));
+  // 준비완료: 오래 대기 중인 게 위(done_at 오름차순)
+  const readyOrders = orders
+    .filter((o) => o.status === "done")
+    .sort((a, b) => (a.done_at ?? "").localeCompare(b.done_at ?? ""));
+  // 수령완료: 방금 수령된 게 위(picked_at 내림차순)
+  const pickedUpOrders = orders
+    .filter((o) => o.status === "picked_up")
+    .sort((a, b) => (b.picked_at ?? "").localeCompare(a.picked_at ?? ""));
 
   const ordersByColumn: Record<ColumnConfig["key"], Order[]> = {
     pending: pendingOrders,
