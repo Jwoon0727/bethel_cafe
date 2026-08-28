@@ -83,18 +83,27 @@ export default function Home() {
             <span className="text-3xl">🌿</span>
             <h1 className="text-2xl font-bold md:text-3xl">The Branch Café</h1>
           </div>
-          {station && (
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold">접수대 {station}</span>
-              <button
-                type="button"
-                onClick={openChangeStation}
-                className="rounded bg-white/20 px-2.5 py-1 text-xs transition hover:bg-white/30"
-              >
-                변경
-              </button>
-            </div>
-          )}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className="rounded bg-white/20 px-2.5 py-1 text-xs transition hover:bg-white/30"
+            >
+              새로고침
+            </button>
+            {station && (
+              <>
+                <span className="text-sm font-semibold">접수대 {station}</span>
+                <button
+                  type="button"
+                  onClick={openChangeStation}
+                  className="rounded bg-white/20 px-2.5 py-1 text-xs transition hover:bg-white/30"
+                >
+                  변경
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </header>
 

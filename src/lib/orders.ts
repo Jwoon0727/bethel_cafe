@@ -97,3 +97,14 @@ export async function revertOrderToDone(id: string): Promise<Order | null> {
 
   return (data as Order) ?? null;
 }
+
+/**
+ * 전체 초기화(행사 시작/종료 시 사용). 모든 주문(picked_up 포함)과 순번 카운터를 리셋한다.
+ */
+export async function resetAllOrders(): Promise<void> {
+  const supabase = createClient();
+  const { error } = await supabase.rpc("reset_all_orders");
+  if (error) {
+    throw error;
+  }
+}

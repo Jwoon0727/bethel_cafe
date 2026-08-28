@@ -193,6 +193,25 @@ grant execute on function public.revert_order_to_pending(uuid) to anon, authenti
 grant execute on function public.revert_order_to_done(uuid)    to anon, authenticated;
 
 -- =========================================================
+-- 3-5b. 전체 초기화 RPC (행사 시작/종료 시 사용)
+-- =========================================================
+-- 모든 주문(picked_up 포함)과 순번을 초기화한다.
+-- Kitchen 화면의 "초기화" 버튼에서 호출한다.
+create or replace function public.reset_all_orders()
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  delete from public.orders;
+  update public.order_counters set last_no = 0;
+end;
+$$;
+
+grant execute on function public.reset_all_orders() to anon, authenticated;
+
+-- =========================================================
 -- 3-6. RLS 정책
 -- =========================================================
 

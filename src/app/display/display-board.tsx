@@ -61,8 +61,7 @@ export function DisplayBoard({ orders }: DisplayBoardProps) {
           {latest ? (
             <>
               <p className="text-3xl font-medium sm:text-4xl 2xl:text-5xl">
-                <span className="font-bold text-[#d4a76a]">방금 나왔어요</span>{" "}
-                <span className="text-white/70">Just made</span>
+             
               </p>
               <div
                 key={latest.id}
@@ -81,10 +80,8 @@ export function DisplayBoard({ orders }: DisplayBoardProps) {
 
         {visibleRest.length > 0 && (
           <div className="w-full space-y-6 pt-6">
-            <p className="text-left text-3xl font-semibold 2xl:text-4xl">
-              <span className="text-[#d4a76a]">준비된 다른 번호</span>{" "}
-              <span className="text-white/70">Other ready numbers</span>
-            </p>
+       
+  
             <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4 2xl:gap-8">
               {visibleRest.map((order) => (
                 <div

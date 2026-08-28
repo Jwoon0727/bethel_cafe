@@ -1,15 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   markOrderDone,
   markOrderPicked,
+  resetAllOrders,
   revertOrderToDone,
   revertOrderToPending,
 } from "@/lib/orders";
 import { createClient } from "@/lib/supabase/client";
+import { MENU } from "@/lib/menu";
+import { TempBadge } from "@/components/temp-badge";
 import type { Order } from "@/lib/types";
 import { KitchenTable } from "./kitchen-table";
+
+const AUTO_PICKUP_MS = 3 * 60 * 1000;
 
 function sortByCreatedAt(orders: Order[]): Order[] {
   return [...orders].sort((a, b) => a.created_at.localeCompare(b.created_at));
@@ -169,16 +174,108 @@ export default function KitchenPage() {
     }
   }
 
+  // 준비완료 3분 초과 시 자동 수령 처리 — 개별 done 주문마다 남은 시간으로 setTimeout 예약
+  const handleMarkPickedRef = useRef(handleMarkPicked);
+  useEffect(() => {
+    handleMarkPickedRef.current = handleMarkPicked;
+  });
+
+  useEffect(() => {
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    const now = Date.now();
+
+    orders.forEach((order) => {
+      if (order.status !== "done" || !order.done_at) return;
+      const remaining = AUTO_PICKUP_MS - (now - new Date(order.done_at).getTime());
+      if (remaining <= 0) {
+        handleMarkPickedRef.current(order);
+      } else {
+        timers.push(
+          setTimeout(() => handleMarkPickedRef.current(order), remaining),
+        );
+      }
+    });
+
+    return () => timers.forEach(clearTimeout);
+  }, [orders]);
+
+  // 메뉴별 수령완료 총 잔 수 통계
+  const pickedUpStats = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const order of orders) {
+      if (order.status !== "picked_up") continue;
+      for (const item of order.items) {
+        counts[item.code] = (counts[item.code] ?? 0) + item.qty;
+      }
+    }
+    return counts;
+  }, [orders]);
+
+  const [resetting, setResetting] = useState(false);
+
+  async function handleReset() {
+    if (resetting) return;
+    const confirmed = window.confirm(
+      "모든 주문 데이터와 순번을 초기화합니다.\n이 작업은 되돌릴 수 없습니다. 계속하시겠어요?",
+    );
+    if (!confirmed) return;
+
+    setResetting(true);
+    try {
+      await resetAllOrders();
+      setOrders([]);
+      showToast("초기화가 완료되었습니다.");
+    } catch {
+      showToast("초기화에 실패했습니다. 다시 시도해주세요.");
+    } finally {
+      setResetting(false);
+    }
+  }
+
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-[#f5f1e8]">
       <header className="shrink-0 bg-[#6b7c5b] px-6 py-4 text-white">
-        <div className="flex items-center gap-2">
-          <span className="text-xl">🌿</span>
-          <h1 className="text-lg font-medium">The Branch Café — Kitchen</h1>
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span className="text-xl">🌿</span>
+            <h1 className="text-lg font-medium">The Branch Café — Kitchen</h1>
+          </div>
+          <button
+            type="button"
+            onClick={handleReset}
+            disabled={resetting}
+            className="rounded-md border border-white/40 bg-white/10 px-3 py-1.5 text-xs font-semibold transition hover:bg-white/20 disabled:opacity-50"
+          >
+            {resetting ? "초기화 중..." : "초기화하기"}
+          </button>
         </div>
       </header>
 
       <div className="mx-auto flex min-h-0 w-full max-w-[1600px] flex-1 flex-col gap-4 overflow-hidden px-6 py-6">
+        {/* 메뉴별 수령완료 통계 */}
+        <div className="grid shrink-0 grid-cols-2 gap-3 sm:grid-cols-4">
+          {MENU.map((item) => (
+            <div
+              key={item.code}
+              className="flex items-center justify-between rounded-xl bg-white px-4 py-3 shadow-sm"
+            >
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-sm font-semibold text-gray-800">
+                    {item.nameKo}
+                  </span>
+                  <TempBadge temp={item.temp} />
+                </div>
+                <div className="text-xs text-gray-500">수령완료 Picked up</div>
+              </div>
+              <div className="text-2xl font-bold text-[#3c2a21]">
+                {pickedUpStats[item.code] ?? 0}
+                <span className="ml-0.5 text-sm font-normal text-gray-500">잔</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
         {toast && (
           <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             {toast}
