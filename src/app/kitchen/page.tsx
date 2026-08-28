@@ -155,11 +155,19 @@ export default function KitchenPage() {
     }
   }
 
+  // 취소(picked_up -> done) 시점을 로컬에 기록해 두는 가드.
+  // revert_order_to_done RPC/Realtime이 돌려주는 done_at이 옛 값이어도
+  // (예: DB 함수가 아직 done_at 갱신 로직으로 재배포되지 않은 경우) 취소 직후
+  // 3분을 온전히 다시 카운트하도록, 자동 픽업 계산에서 이 시각을 하한으로 쓴다.
+  const revertGuardRef = useRef<Map<string, number>>(new Map());
+
   async function handleRevertToDone(order: Order) {
     const previous = order;
     // done_at을 새로 찍어 3분 자동 픽업 카운트다운을 초기화한다.
     // (기존 done_at을 그대로 두면 이미 3분 지난 상태라 취소하자마자 다시 자동 픽업됨)
-    const nowIso = new Date().toISOString();
+    const nowMs = Date.now();
+    const nowIso = new Date(nowMs).toISOString();
+    revertGuardRef.current.set(order.id, nowMs);
     setOrders((prev) =>
       prev.map((o) =>
         o.id === order.id
@@ -171,10 +179,16 @@ export default function KitchenPage() {
     try {
       const result = await revertOrderToDone(order.id);
       if (result === null) {
+        revertGuardRef.current.delete(order.id);
         setOrders((prev) => prev.map((o) => (o.id === order.id ? previous : o)));
         showToast("이미 상태가 변경된 주문입니다.");
+        return;
       }
+      // 서버가 돌려준 권위 있는 행을 반영한다. done_at이 옛 값이어도(구버전 DB
+      // 함수 등) revertGuardRef가 자동 픽업 타이머를 보정해 준다.
+      setOrders((prev) => prev.map((o) => (o.id === order.id ? result : o)));
     } catch {
+      revertGuardRef.current.delete(order.id);
       setOrders((prev) => prev.map((o) => (o.id === order.id ? previous : o)));
       showToast("취소 처리에 실패했습니다. 다시 시도해주세요.");
     }
@@ -189,10 +203,14 @@ export default function KitchenPage() {
   useEffect(() => {
     const timers: ReturnType<typeof setTimeout>[] = [];
     const now = Date.now();
+    const revertGuard = revertGuardRef.current;
 
     orders.forEach((order) => {
       if (order.status !== "done" || !order.done_at) return;
-      const remaining = AUTO_PICKUP_MS - (now - new Date(order.done_at).getTime());
+      const doneAtMs = new Date(order.done_at).getTime();
+      const guardedAtMs = revertGuard.get(order.id) ?? 0;
+      const baseMs = Math.max(doneAtMs, guardedAtMs);
+      const remaining = AUTO_PICKUP_MS - (now - baseMs);
       if (remaining <= 0) {
         handleMarkPickedRef.current(order);
       } else {
@@ -201,6 +219,14 @@ export default function KitchenPage() {
         );
       }
     });
+
+    // done이 아닌 상태로 넘어간 주문의 가드는 정리한다 (Map이 무한정 커지지 않도록).
+    const doneIds = new Set(
+      orders.filter((o) => o.status === "done").map((o) => o.id),
+    );
+    for (const id of revertGuard.keys()) {
+      if (!doneIds.has(id)) revertGuard.delete(id);
+    }
 
     return () => timers.forEach(clearTimeout);
   }, [orders]);

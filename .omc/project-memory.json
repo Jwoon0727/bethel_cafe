@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1787825436883,
+  "lastScanned": 1787912975808,
   "projectRoot": "/Users/jwoonsm5/Desktop/MacM5Dev/bethel_cafe/cafe_order",
   "techStack": {
     "languages": [
@@ -42,7 +42,7 @@
     "runtime": null
   },
   "build": {
-    "buildCommand": "echo \"=== revert 핸들러 null 처리 ===\"; sed -n '/handleRevertToPending/,/^  }/p' src/app/kitchen/page.tsx\necho \"=== lint ===\"; npm run lint 2>&1 | tail -6\necho \"=== build ===\"; npm run build 2>&1 | tail -12",
+    "buildCommand": "npm run lint 2>&1 | tail -20 && echo \"=== BUILD ===\" && npm run build 2>&1 | tail -30",
     "testCommand": null,
     "lintCommand": "npm run lint",
     "devCommand": "npm run dev",
@@ -57,7 +57,7 @@
     "namingStyle": null,
     "importStyle": null,
     "testPattern": null,
-    "fileOrganization": null
+    "fileOrganization": "type-based"
   },
   "structure": {
     "isMonorepo": false,
@@ -73,49 +73,62 @@
     "public": {
       "path": "public",
       "purpose": "Public files",
-      "fileCount": 5,
-      "lastAccessed": 1787825436872,
+      "fileCount": 9,
+      "lastAccessed": 1787912975791,
       "keyFiles": [
         "file.svg",
         "globe.svg",
-        "next.svg",
-        "vercel.svg",
-        "window.svg"
+        "icon-192.svg",
+        "icon-512.svg",
+        "icon-maskable.svg"
       ]
     },
     "src": {
       "path": "src",
       "purpose": "Source code",
       "fileCount": 0,
-      "lastAccessed": 1787825436873,
+      "lastAccessed": 1787912975792,
       "keyFiles": []
     },
     "supabase": {
       "path": "supabase",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1787825436875,
+      "lastAccessed": 1787912975798,
       "keyFiles": [
-        "test_messages.sql"
+        "schema.sql"
       ]
     },
     "src/app": {
       "path": "src/app",
       "purpose": "Application code",
-      "fileCount": 4,
-      "lastAccessed": 1787825436875,
+      "fileCount": 9,
+      "lastAccessed": 1787912975799,
       "keyFiles": [
         "favicon.ico",
         "globals.css",
         "layout.tsx"
       ]
     },
+    "src/components": {
+      "path": "src/components",
+      "purpose": "UI components",
+      "fileCount": 1,
+      "lastAccessed": 1787912975799,
+      "keyFiles": [
+        "temp-badge.tsx"
+      ]
+    },
     "src/lib": {
       "path": "src/lib",
       "purpose": "Library code",
-      "fileCount": 0,
-      "lastAccessed": 1787825436875,
-      "keyFiles": []
+      "fileCount": 5,
+      "lastAccessed": 1787912975799,
+      "keyFiles": [
+        "menu.ts",
+        "orders.ts",
+        "station.ts"
+      ]
     }
   },
   "hotPaths": [],

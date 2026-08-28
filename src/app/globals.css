@@ -40,3 +40,56 @@ body {
     opacity: 1;
   }
 }
+
+/* 주문 완료 모달: 네온 회전 보더 */
+@keyframes neon-border-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes neon-glow-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 8px rgba(255, 180, 60, 0.6),
+      0 0 16px rgba(255, 140, 40, 0.4);
+  }
+  50% {
+    box-shadow:
+      0 0 14px rgba(255, 200, 80, 0.9),
+      0 0 28px rgba(255, 120, 30, 0.6),
+      0 0 40px rgba(255, 180, 60, 0.3);
+  }
+}
+
+.neon-border-wrap {
+  position: relative;
+  border-radius: 0.75rem;
+  padding: 3px;
+  overflow: hidden;
+  animation: neon-glow-pulse 2s ease-in-out infinite;
+}
+
+.neon-border-wrap::before {
+  content: "";
+  position: absolute;
+  inset: -100%;
+  background: conic-gradient(
+    from 0deg,
+    #ffd700,
+    #ff8c00,
+    #ff4500,
+    #ffd700,
+    #ffb347,
+    #ff6347,
+    #ffd700
+  );
+  animation: neon-border-spin 2.5s linear infinite;
+}
+
+.neon-border-inner {
+  position: relative;
+  border-radius: calc(0.75rem - 3px);
+  background: #fff3e0;
+}

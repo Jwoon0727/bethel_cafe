@@ -62,9 +62,9 @@ export function DisplayBoard({ orders }: DisplayBoardProps) {
               <div
                 key={latest.id}
                 style={{ animation: "display-pop 0.5s ease-out" }}
-                className="flex w-full items-center justify-center overflow-hidden rounded-[2.5rem] border-[6px] border-[#d4a76a] bg-[#3a2a1f]/80 px-6 py-10 shadow-[0_0_100px_rgba(212,167,106,0.4)] 2xl:px-10 2xl:py-14"
+                className="flex min-h-[34rem] w-full items-center justify-center overflow-hidden rounded-[2.5rem] border-[6px] border-[#d4a76a] bg-[#3a2a1f]/80 px-6 py-20 shadow-[0_0_100px_rgba(212,167,106,0.4)] 2xl:min-h-[40rem] 2xl:px-10 2xl:py-28"
               >
-                <p className="text-center text-[10rem] font-extrabold leading-none tracking-tight text-[#d4a76a] sm:text-[14rem] 2xl:text-[18rem]">
+                <p className="text-center text-[16rem] font-extrabold leading-none tracking-tight text-[#d4a76a] sm:text-[20rem] 2xl:text-[24rem]">
                   {latest.display_no}
                 </p>
               </div>

@@ -63,9 +63,16 @@ export function OrderResultModal({ order, onClose }: OrderResultModalProps) {
           })}
         </ul>
 
-        <p className="mt-5 rounded-xl bg-[#e8dcc8] px-4 py-3 text-sm font-medium text-[#3c2a21]">
-          이 주문번호를 기억해주세요 번호를 찍어두세요
-        </p>
+        <div className="neon-border-wrap mt-5">
+          <div className="neon-border-inner px-5 py-4">
+            <p className="text-lg font-bold leading-snug text-[#3c2a21]">
+              이 주문번호를 기억해주세요!
+            </p>
+            <p className="mt-1 text-base font-semibold text-[#8b5a3c]">
+              번호를 찍어두세요.
+            </p>
+          </div>
+        </div>
 
         <button
           type="button"
