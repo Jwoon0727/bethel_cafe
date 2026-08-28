@@ -49,17 +49,12 @@ export function DisplayBoard({ orders }: DisplayBoardProps) {
       <div className="relative z-10 mx-auto flex min-h-screen max-w-[1800px] flex-col items-center gap-10 px-10 py-12 text-center 2xl:gap-14 2xl:px-16 2xl:py-16">
         <div className="space-y-3">
           <p className="text-5xl font-bold text-[#d4a76a] sm:text-6xl 2xl:text-7xl">
-            주문하신 음료가 준비되었습니다
+            주문하신 음료가 준비되었습니다!
           </p>
           <p className="text-3xl font-semibold text-white sm:text-4xl 2xl:text-5xl">
             Your order is ready!
           </p>
-          <p className="pt-3 text-2xl text-white/80 2xl:text-3xl">
-            번호를 확인하고 픽업대에서 받아가세요
-          </p>
-          <p className="text-xl text-white/60 2xl:text-2xl">
-            Please check your number and collect it at the pickup counter
-          </p>
+         
         </div>
 
         <div className="flex w-full flex-col items-center gap-6">
