@@ -157,9 +157,14 @@ export default function KitchenPage() {
 
   async function handleRevertToDone(order: Order) {
     const previous = order;
+    // done_at을 새로 찍어 3분 자동 픽업 카운트다운을 초기화한다.
+    // (기존 done_at을 그대로 두면 이미 3분 지난 상태라 취소하자마자 다시 자동 픽업됨)
+    const nowIso = new Date().toISOString();
     setOrders((prev) =>
       prev.map((o) =>
-        o.id === order.id ? { ...o, status: "done", picked_at: null } : o,
+        o.id === order.id
+          ? { ...o, status: "done", done_at: nowIso, picked_at: null }
+          : o,
       ),
     );
 

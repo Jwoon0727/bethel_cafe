@@ -2,13 +2,11 @@
 
 import type { Order } from "@/lib/types";
 
-const MAX_REST_VISIBLE = 8;
+const MAX_REST_VISIBLE = 3;
 
 type DisplayBoardProps = {
   orders: Order[];
 };
-
-// 배경색 의논 중 - 블랙 or 다크브라운으로
 
 const BRICK_SVG = `
 <svg xmlns='http://www.w3.org/2000/svg' width='160' height='80' viewBox='0 0 160 80'>
@@ -47,47 +45,46 @@ export function DisplayBoard({ orders }: DisplayBoardProps) {
       {/* Dark overlay to keep text legible over brick */}
       <div className="absolute inset-0 bg-black/70" />
 
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-[1800px] flex-col items-center gap-10 px-10 py-12 text-center 2xl:gap-14 2xl:px-16 2xl:py-16">
-        <div className="space-y-3">
-          <p className="text-5xl font-bold text-[#d4a76a] sm:text-6xl 2xl:text-7xl">
-            주문하신 음료가 준비되었습니다!
-          </p>
-          <p className="text-3xl font-semibold text-white sm:text-4xl 2xl:text-5xl">
-            Your order is ready!
-          </p>
-         
-        </div>
+      <div className="relative z-10 mx-auto flex min-h-screen max-w-[1800px] flex-col gap-8 px-10 py-10 lg:flex-row lg:items-stretch lg:gap-12 lg:px-14 lg:py-14 2xl:gap-16 2xl:px-20 2xl:py-16">
+        {/* Left: 헤드라인(상단) + 최신 주문번호 */}
+        <div className="flex min-w-0 flex-1 flex-col gap-8 text-center 2xl:gap-12">
+          <div className="space-y-3">
+            <p className="text-5xl font-bold text-[#d4a76a] sm:text-6xl 2xl:text-7xl">
+              주문하신 음료가 준비되었습니다!
+            </p>
+            <p className="text-3xl font-semibold text-white sm:text-4xl 2xl:text-5xl">
+              Your order is ready!
+            </p>
+          </div>
 
-        <div className="flex w-full flex-col items-center gap-6">
-          {latest ? (
-            <>
-              <p className="text-3xl font-medium sm:text-4xl 2xl:text-5xl">
-             
-              </p>
+          <div className="flex flex-1 items-center">
+            {latest ? (
               <div
                 key={latest.id}
                 style={{ animation: "display-pop 0.5s ease-out" }}
-                className="flex w-full items-center justify-center rounded-[2.5rem] border-[6px] border-[#d4a76a] bg-[#3a2a1f]/80 py-20 shadow-[0_0_100px_rgba(212,167,106,0.4)] 2xl:py-28"
+                className="flex w-full items-center justify-center overflow-hidden rounded-[2.5rem] border-[6px] border-[#d4a76a] bg-[#3a2a1f]/80 px-6 py-10 shadow-[0_0_100px_rgba(212,167,106,0.4)] 2xl:px-10 2xl:py-14"
               >
-                <p className="text-[16rem] font-extrabold leading-none tracking-tight text-[#d4a76a] sm:text-[20rem] 2xl:text-[24rem]">
+                <p className="text-center text-[10rem] font-extrabold leading-none tracking-tight text-[#d4a76a] sm:text-[14rem] 2xl:text-[18rem]">
                   {latest.display_no}
                 </p>
               </div>
-            </>
-          ) : (
-            <p className="text-4xl text-white/50 2xl:text-5xl">준비 중인 주문이 없습니다</p>
-          )}
+            ) : (
+              <p className="w-full text-4xl text-white/50 2xl:text-5xl">
+                준비 중인 주문이 없습니다
+              </p>
+            )}
+          </div>
         </div>
 
+        {/* Right: 준비된 다른 번호 (최대 3개, 카드 크기 고정) */}
         {visibleRest.length > 0 && (
-          <div className="w-full space-y-6 pt-6">
-       
-  
-            <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4 2xl:gap-8">
+          <div className="flex w-full flex-col gap-4 lg:w-[26rem] lg:shrink-0 2xl:w-[32rem] 2xl:gap-6">
+         
+            <div className="flex flex-col gap-4 2xl:gap-6">
               {visibleRest.map((order) => (
                 <div
                   key={order.id}
-                  className="rounded-3xl border border-white/10 bg-[#2a1f18]/80 py-14 text-center shadow-lg 2xl:py-20"
+                  className="flex h-[14rem] items-center justify-center rounded-3xl border border-white/10 bg-[#2a1f18]/80 text-center shadow-lg 2xl:h-[18rem]"
                 >
                   <p className="text-[8rem] font-extrabold leading-none tracking-tight text-[#f0e4d0] 2xl:text-[10rem]">
                     {order.display_no}

@@ -183,8 +183,10 @@ language sql
 security definer
 set search_path = public
 as $$
+  -- done_at을 now()로 갱신 — 취소 후 3분 자동 픽업 카운트다운을 새로 시작하기 위함.
+  -- (예전 done_at이 3분 지난 상태로 남아 있으면 취소하자마자 다시 자동 픽업된다)
   update public.orders
-     set status = 'done', picked_at = null
+     set status = 'done', done_at = now(), picked_at = null
    where id = p_id and status = 'picked_up'
   returning *;
 $$;
