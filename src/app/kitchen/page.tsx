@@ -301,7 +301,7 @@ export default function KitchenPage() {
 
       <div className="mx-auto flex min-h-0 w-full max-w-[1600px] flex-1 flex-col gap-4 overflow-hidden px-6 py-6">
         {/* 메뉴별 수령완료 통계 */}
-        <div className="grid shrink-0 grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="grid shrink-0 grid-cols-2 gap-3 sm:grid-cols-3">
           {MENU.map((item) => (
             <div
               key={item.code}

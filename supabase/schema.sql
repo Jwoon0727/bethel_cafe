@@ -104,7 +104,7 @@ begin
   for v_item in select * from jsonb_array_elements(p_items)
   loop
     if (v_item->>'code') is null
-       or (v_item->>'code') not in ('LATTE_HOT', 'LATTE_ICE', 'AMER_HOT', 'AMER_ICE') then
+       or (v_item->>'code') not in ('LATTE_HOT', 'LATTE_ICE', 'AMER_HOT') then
       raise exception '알 수 없는 메뉴입니다: %', v_item->>'code';
     end if;
     if coalesce((v_item->>'qty')::int, 0) not between 1 and 99 then
