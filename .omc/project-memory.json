@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1788130227087,
+  "lastScanned": 1788250837865,
   "projectRoot": "/Users/jwoonsm5/Desktop/MacM5Dev/bethel_cafe/cafe_order",
   "techStack": {
     "languages": [
@@ -42,7 +42,7 @@
     "runtime": null
   },
   "build": {
-    "buildCommand": "export PATH=\"$HOME/.nvm/versions/node/v24.14.1/bin:$PATH\"; npm run build 2>&1 | tail -25",
+    "buildCommand": "export NVM_DIR=\"$HOME/.nvm\"; [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" >/dev/null 2>&1\necho \"=== 잔여 확인 ===\"; grep -n \"closeLimitMessage\\|alertdialog\\|bg-black/50\" src/app/page.tsx || echo \"(모달 잔재 없음)\"\necho \"=== LINT ===\"; npm run lint 2>&1 | tail -12\necho \"=== BUILD ===\"; npm run build 2>&1 | tail -12",
     "testCommand": null,
     "lintCommand": "npm run lint",
     "devCommand": "npm run dev",
@@ -74,7 +74,7 @@
       "path": "public",
       "purpose": "Public files",
       "fileCount": 9,
-      "lastAccessed": 1788130227073,
+      "lastAccessed": 1788250837847,
       "keyFiles": [
         "file.svg",
         "globe.svg",
@@ -87,14 +87,14 @@
       "path": "src",
       "purpose": "Source code",
       "fileCount": 0,
-      "lastAccessed": 1788130227073,
+      "lastAccessed": 1788250837848,
       "keyFiles": []
     },
     "supabase": {
       "path": "supabase",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1788130227076,
+      "lastAccessed": 1788250837850,
       "keyFiles": [
         "schema.sql"
       ]
@@ -103,7 +103,7 @@
       "path": "src/app",
       "purpose": "Application code",
       "fileCount": 9,
-      "lastAccessed": 1788130227077,
+      "lastAccessed": 1788250837851,
       "keyFiles": [
         "favicon.ico",
         "globals.css",
@@ -114,7 +114,7 @@
       "path": "src/components",
       "purpose": "UI components",
       "fileCount": 1,
-      "lastAccessed": 1788130227077,
+      "lastAccessed": 1788250837851,
       "keyFiles": [
         "temp-badge.tsx"
       ]
@@ -123,7 +123,7 @@
       "path": "src/lib",
       "purpose": "Library code",
       "fileCount": 5,
-      "lastAccessed": 1788130227077,
+      "lastAccessed": 1788250837851,
       "keyFiles": [
         "menu.ts",
         "orders.ts",

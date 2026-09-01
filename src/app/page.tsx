@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { MENU, buildOrderItems, type MenuCode } from "@/lib/menu";
+import { useEffect, useRef, useState } from "react";
+import { MAX_ORDER_QTY, MENU, buildOrderItems, type MenuCode } from "@/lib/menu";
 import { createOrder } from "@/lib/orders";
 import { useStation } from "@/lib/use-station";
 import type { Order, Station } from "@/lib/types";
@@ -10,6 +10,8 @@ import { OrderResultModal } from "./order-result-modal";
 import { StationModal } from "./station-modal";
 
 const RESET_DELAY_MS = 400;
+const ORDER_LIMIT_MESSAGE = "주문 한 건당 4잔까지 주문이 가능합니다!";
+const LIMIT_MESSAGE_DURATION_MS = 2000;
 
 export default function Home() {
   const [station, setStation] = useStation();
@@ -19,6 +21,16 @@ export default function Home() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [resultOrder, setResultOrder] = useState<Order | null>(null);
   const [resetting, setResetting] = useState(false);
+  const [limitMessage, setLimitMessage] = useState<string | null>(null);
+  const limitTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (limitTimeoutRef.current) {
+        clearTimeout(limitTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // station이 아직 없으면(최초 진입) 닫을 수 없는 모달, 있으면 헤더에서 연 변경 모달
   const stationModalOpen = station === null || changingStation;
@@ -37,7 +49,23 @@ export default function Home() {
     setChangingStation(false);
   }
 
+  function showLimitMessage() {
+    setLimitMessage(ORDER_LIMIT_MESSAGE);
+    if (limitTimeoutRef.current) {
+      clearTimeout(limitTimeoutRef.current);
+    }
+    limitTimeoutRef.current = setTimeout(() => {
+      setLimitMessage(null);
+      limitTimeoutRef.current = null;
+    }, LIMIT_MESSAGE_DURATION_MS);
+  }
+
   function handleChangeQty(code: MenuCode, qty: number) {
+    const others = totalQty - (cart[code] ?? 0);
+    if (others + qty > MAX_ORDER_QTY) {
+      showLimitMessage();
+      return;
+    }
     setCart((prev) => ({ ...prev, [code]: qty }));
   }
 
@@ -46,6 +74,11 @@ export default function Home() {
 
   async function handleOrder() {
     if (!station || totalQty === 0 || submitting) {
+      return;
+    }
+
+    if (totalQty > MAX_ORDER_QTY) {
+      setErrorMessage(ORDER_LIMIT_MESSAGE);
       return;
     }
 
@@ -151,6 +184,14 @@ export default function Home() {
       {resetting && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-white/70">
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-300 border-t-gray-900" />
+        </div>
+      )}
+
+      {limitMessage && (
+        <div className="pointer-events-none fixed inset-0 z-30 flex items-center justify-center px-4">
+          <div className="rounded-xl border-2 border-[#2D5A43] bg-[#f5f1e8] px-7 py-5 text-center text-xl font-bold text-[#2D5A43] shadow-lg">
+            {limitMessage}
+          </div>
         </div>
       )}
     </div>

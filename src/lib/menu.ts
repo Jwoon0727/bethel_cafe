@@ -18,6 +18,9 @@ export const MENU: MenuItem[] = [
   { code: "AMER_HOT", nameKo: "아메리카노", nameEn: "Americano", temp: "HOT" },
 ];
 
+// 한 주문(모든 메뉴 합산)당 최대 주문 가능 수량
+export const MAX_ORDER_QTY = 4;
+
 export function menuDisplayName(item: Pick<MenuItem, "nameKo" | "temp">): string {
   return `${item.nameKo} (${item.temp})`;
 }
